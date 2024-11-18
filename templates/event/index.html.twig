@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Events{% endblock %}
+
+{% block body %}
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body {
+                background: linear-gradient(135deg, #d63384, #6f42c1);
+                color: white;
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+            .sidebar {
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            .event-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+            .event {
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            }
+        </style>
+    </head>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <h4>Categories</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ path('app_event') }}">Show All</a></li>
+                        {% for category in categories %}
+                            <li><a href="{{ path('app_event', {'category': category.id}) }}">{{ category.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="sidebar">
+                    <h4>Price Range (TND)</h4>
+                    <form method="get" action="{{ path('app_event') }}">
+                        <select name="price" class="form-control">
+                            <option value="">Select Price Range</option>
+                            <option value="0-50">0 - 50 TND</option>
+                            <option value="51-100">51 - 100 TND</option>
+                            <option value="101-200">101 - 200 TND</option>
+                            <option value="201+">201+ TND</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary mt-2">Filter</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1>Events</h1>
+                <div class="event-container">
+                    {% set selectedCategory = app.request.get('category') %}
+                    {% set selectedPrice = app.request.get('price') %}
+
+                    {% if events is not empty %}
+                        {% for event in events %}
+                            {% set ticketPrices = [] %}
+                            {% for ticket in event.tickets %}
+                                {% if ticket.price is defined %}
+                                    {% set ticketPrices = ticketPrices|merge([ticket.price]) %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% set minPrice = 0 %}
+                            {% set maxPrice = 999999 %}
+
+                            {% if selectedPrice %}
+                                {% if selectedPrice starts with '201' %}
+                                    {% set minPrice = 201 %}
+                                    {% set maxPrice = 999999 %}
+                                {% else %}
+                                    {% set prices = selectedPrice|split('-') %}
+                                    {% set minPrice = prices[0] %}
+                                    {% set maxPrice = (prices[1] is defined ? prices[1] : 999999) %}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if (not selectedCategory or event.category.id == selectedCategory) and (ticketPrices|length > 0) %}
+                                {% set withinPriceRange = ticketPrices|filter(t => t >= minPrice and t <= maxPrice) %}
+                                {% if withinPriceRange|length > 0 %}
+                                    
+                                        <div class="event">
+                                            <h3>{{ event.name }}</h3>
+                                            <p>{{ event.description }}</p>
+                                            <p><strong>Location:</strong> {{ event.location }}</p>
+                                            <p><strong>Date:</strong> {{ event.date|date('Y-m-d') }}</p>
+                                            <p><strong>Price:</strong> {{ withinPriceRange|first }} TND</p>
+                                            <a href="{{ path('app_ticket_details', {id: event.id}) }}" class="btn btn-info mt-2">View Details</a>
+                                        </div>
+                                        
+                                    
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>No events found matching your criteria.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

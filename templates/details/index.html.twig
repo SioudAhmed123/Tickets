@@ -1,0 +1,41 @@
+{# templates/ticket/details.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket Details{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ asset('images/ticket.png') }}" class="img-fluid" alt="Ticket Image">
+            </div>
+            <div class="col-md-8">
+                <h2>{{ ticket.name }}</h2>
+                <p><strong>Description:</strong> {{ event.description }}</p>
+                <p><strong>Quantity Available:</strong> {{ ticket.quantity }}</p>
+                <p><strong>Price:</strong> {{ ticket.price }} TND</p>
+                <button class="btn btn-primary">Buy</button>
+                <button class="btn btn-secondary">Add to Cart</button>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h3>Similar Tickets</h3>
+        <div class="row">
+            {% for similarTicket in similarTickets %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div style="background-color: rgb(240, 32, 143);">
+                            <h3 style="color:rgb(236, 228, 231);">{{ similarTicket.name }}</h3>
+                            <p style="color:rgb(238, 232, 234);">Price: {{ similarTicket.price }} TND</p>
+                            <a href="{{ path('app_ticket_details', {'id': similarTicket.id}) }}" class="btn btn-primary btn-lg">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

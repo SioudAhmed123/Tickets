@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Register</h1>
+
+    {{ form_start(registrationForm, {'attr': {'class': 'form-group'}}) }}
+        <div class="mb-3">
+            {{ form_row(registrationForm.name, {
+                'attr': {'class': 'form-control', 'placeholder': 'Enter your name'}
+            }) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(registrationForm.email, {
+                'attr': {'class': 'form-control', 'placeholder': 'Enter your email'}
+            }) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(registrationForm.plainPassword, {
+                'attr': {'class': 'form-control', 'placeholder': 'Enter your password'}
+            }) }}
+        </div>
+        <div class="mb-3">
+            {{ form_widget(registrationForm.submit, {
+                'attr': {'class': 'btn btn-primary'}
+            }) }}
+        </div>
+    {{ form_end(registrationForm) }}
+
+    {% if app.session.flashBag.has('success') %}
+        <div class="alert alert-success">
+            {{ app.session.flashBag.get('success') | first }}
+        </div>
+    {% endif %}
+    {% if app.session.flashBag.has('verify_email_error') %}
+        <div class="alert alert-danger">
+            {{ app.session.flashBag.get('verify_email_error') | first }}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

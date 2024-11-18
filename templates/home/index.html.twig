@@ -1,0 +1,52 @@
+{# templates/home/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="intro-section">
+    <img src="{{ asset('images/ticket.png') }}" alt="Introduction Image"> <!-- Change the image path as needed -->
+    <div class="intro-text">
+        <h2>Welcome to Our Event Tickets Platform</h2>
+        <p>
+            Discover amazing events happening near you! Whether you are looking for concerts, sports events, or festivals,
+            we have tickets for all the best experiences. Browse through our selection, find your perfect event, and 
+            get ready to enjoy unforgettable moments.
+        </p>
+    </div>
+</div>
+   
+      
+    <form method="get" action="{{ path('app_home') }}" class="filter-form">
+        <input type="text" name="name" placeholder="Event Name" value="{{ app.request.get('name') }}">
+        <input type="text" name="location" placeholder="Location" value="{{ app.request.get('location') }}">
+        <input type="date" name="date" value="{{ app.request.get('date') }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="event-container">
+        {% set searchName = app.request.get('name') %}
+        {% set searchLocation = app.request.get('location') %}
+        {% set searchDate = app.request.get('date') %}
+
+        {% if events is not empty %}
+            {% for event in events %}
+                {% if
+                    (not searchName or event.name matches '/.*' ~ searchName ~ '.*/i') and
+                    (not searchLocation or event.location matches '/.*' ~ searchLocation ~ '.*/i') and
+                    (not searchDate or event.date|date('Y-m-d') == searchDate)
+                %}
+                    <div class="event">
+                        <h3>{{ event.name }}</h3>
+                        <p>{{ event.description }}</p>
+                        <p><strong>Location:</strong> {{ event.location }}</p>
+                        <p><strong>Date:</strong> {{ event.date|date('Y-m-d') }}</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No events found matching your criteria.</p>
+        {% endif %}
+    </div>
+{% endblock %}
