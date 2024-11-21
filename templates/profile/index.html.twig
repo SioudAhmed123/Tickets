@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+    <h1>Your Profile</h1>
+
+    <!-- Display any success flash message -->
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div>
+        <p><strong>Email:</strong> {{ app.user.email }}</p>
+        <p><strong>Name:</strong> {{ app.user.name }}</p>
+      
+    </div>
+
+    <h3>Edit Your Profile</h3>
+    {{ form_start(profileForm) }}
+        <div>
+            {{ form_label(profileForm.name) }}
+            {{ form_widget(profileForm.name) }}
+            <div class="form-error">
+                {{ form_errors(profileForm.name) }}
+            </div>
+        </div>
+
+        <button class="btn">Update Profile</button>
+    {{ form_end(profileForm) }}
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TicketsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TicketsRepository::class)]
@@ -27,6 +29,16 @@ class Tickets
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'Ticket')]
+    private Collection $reservations;
+
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+    }
+
+    
 
     public function getId(): ?int
     {
@@ -92,4 +104,36 @@ class Tickets
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setTicket($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getTicket() === $this) {
+                $reservation->setTicket(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }

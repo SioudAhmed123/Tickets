@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reserve Tickets{% endblock %}
+
+{% block body %}
+    <h1>Reserve Tickets for {{ ticket.name }}</h1>
+    <p>Event: {{ ticket.getEventId().name }}</p>
+    <p>Price per Ticket: {{ ticket.price }} USD</p>
+    <p>Available Tickets: {{ ticket.quantity }}</p>
+    <p>Maximum Tickets You Can Buy: {{ (ticket.quantity // 4) }}</p>
+
+    {{ form_start(form) }}
+        {{ form_row(form.quantity, {'label': 'Enter the number of tickets'}) }}
+        {{ form_row(form.confirm) }}
+    {{ form_end(form) }}
+{% endblock %}

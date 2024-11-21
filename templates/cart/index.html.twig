@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Your Cart</h1>
+
+    {% if reservations is empty %}
+        <div class="alert alert-warning" role="alert">
+            Your cart is empty.
+        </div>
+    {% else %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Ticket Name</th>
+                    <th scope="col">Event</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price per Ticket</th>
+                    <th scope="col">Total Price</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.getTicket().getName() }}</td>
+                        <td>{{ reservation.getTicket().getEventId().name }}</td>
+                        <td>{{ reservation.getQuantity() }}</td>
+                        <td>{{ reservation.getTicket().getPrice() }} USD</td>
+                        <td>{{ reservation.getQuantity() * reservation.getTicket().getPrice() }} USD</td>
+                        <td>
+                            <a href="{{ path('remove_from_cart', { 'id': reservation.id }) }}" class="btn btn-danger">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between">
+            <h4>Total Cost: <span class="text-success">{{ totalCost }} USD</span></h4>
+            <a href="{{ path('app_checkout') }}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -14,8 +14,9 @@
                 <p><strong>Description:</strong> {{ event.description }}</p>
                 <p><strong>Quantity Available:</strong> {{ ticket.quantity }}</p>
                 <p><strong>Price:</strong> {{ ticket.price }} TND</p>
-                <button class="btn btn-primary">Buy</button>
-                <button class="btn btn-secondary">Add to Cart</button>
+                <td>
+                    <a href="{{ path('app_ticket_reserve', { id: ticket.id }) }}" class="btn btn-primary btn-lg">Buy</a>
+                </td>
             </div>
         </div>
 

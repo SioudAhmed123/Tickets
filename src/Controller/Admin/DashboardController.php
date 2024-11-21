@@ -3,9 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Categorie;
-use App\Entity\Users;
+use App\Entity\User;
 use App\Entity\Tickets;
 use App\Entity\Events;
+use App\Entity\Reservation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -35,10 +36,11 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Users', 'fas fa-users', Users::class)->setAction('detail');  
+        
         yield MenuItem::linkToCrud('Tickets', 'fas fa-users', Tickets::class);
         yield MenuItem::linkToCrud('Events', 'fas fa-events', Events::class);
-        yield MenuItem::linkToCrud('Category', 'fas fa-events', Categorie::class);
+        yield MenuItem::linkToCrud('Category', 'fas fa-category', Categorie::class);
+        yield MenuItem::linkToCrud('Reservation', 'fas fa-reservation', Reservation::class);
       
 }
       

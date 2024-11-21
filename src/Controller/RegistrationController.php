@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Users;
+use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +15,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use DateTimeImmutable; 
 
 class RegistrationController extends AbstractController
 {
@@ -29,11 +28,22 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new Users();
+        $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle the role selection
+            $role = $form->get('role')->getData();  // Get the selected role
+
+            // If a role is selected, set it to the user
+            if ($role) {
+                $user->setRole($role);  // Assuming you have a setRole method in the User entity
+            }
+            $name = $form->get('name')->getData();
+            $user->setName($name);
+
+
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -42,23 +52,19 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            // Set the role and created_at
-            $user->setRole($form->get('role')->getData());
-            $user->setCreatedAt(new DateTimeImmutable()); 
-
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
+            // Send email verification
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
-                    ->from(new Address('siouda521@gmail.com', 'the admin'))
+                    ->from(new Address('siouda521@gmail.com', 'ahmed'))
                     ->to($user->getEmail())
                     ->subject('Please Confirm your Email')
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            return $this->redirectToRoute('app_login'); 
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [

@@ -31,6 +31,22 @@
         .style1{
             background: linear-gradient(135deg, #d63384, #6f42c1);
         }
+        .profile-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .profile-icon:hover {
+            background-color: #0056b3;
+        }
         nav {
             background-color: rgba(255, 255, 255, 0.1);
             padding: 10px 20px;
@@ -131,13 +147,35 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Aziz & Ahmed Tickets</a>
     <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav ms-auto">
             <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ path('app_event') }}">Events</a></li>
             <li class="nav-item"><a class="nav-link" href="">Contact</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ path('app_register') }}">Register</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{ path('app_logout') }}">Logout</a></li>
+            {% if app.user %}
+            <!-- Show the logout button only if the user is authenticated -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_logout') }}">Logout</a>
+            </li>
+        {% else %}
+            <!-- Optionally show login/register links when not authenticated -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_login') }}">Login</a>
+            </li>
+        {% endif %}
+            <li class="nav-item"><a class="nav-link" href="{{ path('app_cart') }}">Cart</a></li>
+            
+            {% if app.user %}
+            <li class="" style="margin-left: 700px;">
+                <a href="{{ path('app_profile') }}" class="nav-link">
+                    <!-- Circle with initials or profile picture -->
+                    <span class="profile-icon">
+                        {{ app.user.name | slice(0, 1) }} <!-- Use the first letter of the username -->
+                    </span>
+                </a>
+            </li>
+        
+        {% endif %}
         </ul>
     </div>
 </nav>
